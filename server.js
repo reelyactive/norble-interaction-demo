@@ -35,8 +35,6 @@ middleware.on('visibilityEvent', function(tiraid) {
 
   if(isNorble) {
     var norble = tiraid.identifier.advData.manufacturerSpecificData.norble;
-    // [ { instanceId: '03040506', rssi: -64 } ]
-
     io.emit('norble', { norble: norble });
   }
 });
