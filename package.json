@@ -1,0 +1,38 @@
+{
+  "name": "norble-interaction-demo",
+  "homepage": "https://github.com/reelyactive/norble-interaction-demo/",
+  "author": "reelyActive",
+  "description": "Web visualisation of the interaction of a NorBLE with its environment. We believe in an open Internet of Things.",
+  "keywords": [
+    "NorBLE",
+    "BLE",
+    "proximity",
+    "interaction"
+  ],
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "main": "./server.js",
+  "scripts": {
+    "start": "node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reelyactive/norble-interaction-demo.git"
+  },
+  "dependencies": {
+    "barnowl": ">=0.4.28",
+    "serialport": ">=4.0.0",
+    "express": ">=4.0.0",
+    "socket.io": ">=2.0.0"
+  },
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://github.com/reelyactive/norble-interaction-demo/issues"
+  },
+  "contributors": [
+    { "name": "Jeffrey Dungen" }
+  ],
+  "license": "MIT"
+}
