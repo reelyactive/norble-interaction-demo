@@ -1,9 +1,11 @@
 /**
- * Copyright reelyActive 2017
+ * Copyright reelyActive 2017-2018
  * We believe in an open Internet of Things.
  */
 
-const KNOB_BASE_CLASSES = 'img-responsive center-block';
+
+INVALID_RSSI = -128;
+
 
 angular.module('norble-interaction-demo', [ 'ui.bootstrap' ])
 
@@ -12,33 +14,90 @@ angular.module('norble-interaction-demo', [ 'ui.bootstrap' ])
     var url = $location.protocol() + '://' + $location.host() + ':' +
               $location.port();
     var socket = io.connect(url);
+    var previousInstanceId;
+    var previousRssi = INVALID_RSSI;
+    var previousCyclicCount = -1;
+    var isHistoricData = false;
+    $scope.appliedFilters = [];
 
     applyConstantsToScope();
 
     socket.on('norble', function(data) {
       $scope.norble = data.norble;
-      updateInteraction(data.norble);
-      updateAcceleration(data.norble);
-      $scope.$apply();
+      if(isNewSurvey(data.norble)) {
+        updateInteraction(data.norble);
+        updateAcceleration(data.norble);
+        $scope.$apply();
+      }
     });
+
+    function isNewSurvey(norble) {
+      if(norble.cyclicCount !== previousCyclicCount) {
+        previousCyclicCount = norble.cyclicCount;
+        return true;
+      }
+      return false;
+    }
 
     function updateInteraction(norble) {
       var slot = 0;
+
+      // NorBLE has detected at least one beacon
       if(norble.nearest.length > 0) {
         var closestInstanceId = norble.nearest[0].instanceId;
-        if(closestInstanceId === $scope.firstInstanceId) {
-          slot = 1;
+        var closestRssi = norble.nearest[0].rssi;
+        var isPreviousStronger = ((previousRssi > closestRssi) &&
+                                  (previousInstanceId !== closestInstanceId));
+
+        if(!isHistoricData && isPreviousStronger) {
+          slot = getSlot(previousInstanceId);
+          isHistoricData = true;
         }
-        else if(closestInstanceId === $scope.secondInstanceId) {
-          slot = 2;
+        else {
+          slot = getSlot(closestInstanceId);
+          isHistoricData = false;
         }
-        else if(closestInstanceId === $scope.thirdInstanceId) {
-          slot = 3;
-        }
+
+        previousInstanceId = closestInstanceId;
+        previousRssi = closestRssi;
       }
+
+      // NorBLE has not detected any beacons, but there was one previously
+      else if(previousInstanceId !== null) {
+        if(isHistoricData) {
+          isHistoricData = false;
+        }
+        else {
+          slot = getSlot(previousInstanceId);
+          isHistoricData = true;
+        }
+
+        previousInstanceId = null;
+        previousRssi = INVALID_RSSI;
+      }
+
       $scope.atFirst = (slot === 1);
       $scope.atSecond = (slot === 2);
       $scope.atThird = (slot === 3);
+      if(isHistoricData) {
+        $scope.appliedFilters = [ 'Previous survey memory' ];
+      }
+      else {
+        $scope.appliedFilters = [];
+      }
+    }
+
+    function getSlot(instanceId) {
+      if(instanceId === $scope.firstInstanceId) {
+        return 1;
+      }
+      else if(instanceId === $scope.secondInstanceId) {
+        return 2;
+      }
+      else if(instanceId === $scope.thirdInstanceId) {
+        return 3;
+      }
+      return 0;
     }
 
     function updateAcceleration(norble) {

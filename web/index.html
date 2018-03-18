@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title> NorBLE Interaction Demo </title>
+    <title> DirAct&trade; Interaction Demo </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style/bootstrap.min.css">
     <link rel="stylesheet" href="style/reelyactive.css">
@@ -75,6 +75,7 @@
             <th> Acceleration </th>
             <th> Battery </th>
             <th> Nearest </th>
+            <th> Applied Filters </th>
           </thead>
           <tbody>
             <tr>
@@ -94,19 +95,24 @@
                   <tt>{{beacon.instanceId}}</tt> @ {{beacon.rssi}}dBm <br>
                 </span> 
               </td>
+              <td>
+                <span ng-repeat="filter in appliedFilters">
+                  {{filter}} <br>
+                </span> 
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
       <footer class="footer">
         <a href="https://github.com/reelyactive/norble-interaction-demo">
-          NorBLE Interaction Demo
+          DirAct&trade; Interaction Demo
         </a>
         &nbsp; | &nbsp;
         <a href="https://www.reelyactive.com"
            uib-tooltip="We believe in an open Internet of Things"
            tooltip-placement="right">
-          &copy; reelyActive 2017
+          &copy; reelyActive 2017-2018
         </a>
       </footer>
     </div>
